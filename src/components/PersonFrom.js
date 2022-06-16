@@ -1,6 +1,7 @@
 import axios from "axios"
 import { useState } from "react"
 import { createPhones } from "../services/phonebook/createPhones"
+import { getPhones } from "../services/phonebook/getPhones"
 
 const PersonForm = ({persons, setPersons}) => {
     const [newName, setNewName] = useState('')
@@ -21,10 +22,11 @@ const PersonForm = ({persons, setPersons}) => {
             alredyAdded = true
             if(window.confirm(`${newName} is alredy added to phonebook, replace the old number with a new one?`)) {
              const toReplace =  persons.find(person => person.name === newName)
-             const newPersons = persons.filter(person => person.name !== newName)
-             setPersons(newPersons)
-             axios.put(`http://localhost:3001/phonebook/${toReplace.id}`, {name: newName, number: newNumber, id: toReplace.id})
-              .then(() => document.location.reload())
+             console.log(toReplace.id)
+             axios.put(`http://localhost:3001/api/persons/${toReplace.id}`, {name: newName, number: newNumber})
+              .then(result => {
+                getPhones().then(data => setPersons(data))
+              })
 
             }
             return alredyAdded
