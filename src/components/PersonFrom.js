@@ -3,7 +3,7 @@ import { useState } from "react"
 import { createPhones } from "../services/phonebook/createPhones"
 import { getPhones } from "../services/phonebook/getPhones"
 
-const PersonForm = ({persons, setPersons}) => {
+const PersonForm = ({persons, setPersons, setError}) => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
   
@@ -27,6 +27,7 @@ const PersonForm = ({persons, setPersons}) => {
               .then(result => {
                 getPhones().then(data => setPersons(data))
               })
+              .catch(err => setError(err.response.data))
 
             }
             return alredyAdded
@@ -35,8 +36,10 @@ const PersonForm = ({persons, setPersons}) => {
       })
       if(!alredyAdded) {
         createPhones({name: newName}, {number: newNumber})
-        setPersons(persons.concat({name: newName, number: newNumber}))
-        document.location.reload()
+                    .catch(err => setError(err.response.data))
+                    
+        getPhones().then((data) => setPersons(data))
+        // document.location.reload()
           
   
       }
